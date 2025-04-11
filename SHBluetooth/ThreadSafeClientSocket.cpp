@@ -29,7 +29,7 @@ int ThreadSafeClientSocket::sendData(const char* data, int length) {
 
     return pImpl->sendData(data, length);
 }
-int ThreadSafeClientSocket::socket()
+SOCKET ThreadSafeClientSocket::socket()
 {
     return pImpl->socket();
 }

@@ -30,7 +30,7 @@ file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 target_sources(${PROJECT_NAME} 
 				PRIVATE 
 				${HEADER_FILES}
-				${CMAKE_CURRENT_SOURCE_DIR}/SHBluetooth.cpp
+				
 				${CMAKE_CURRENT_SOURCE_DIR}/bt_common.h
 				${CMAKE_CURRENT_SOURCE_DIR}/bt_common.cpp
 				
@@ -46,9 +46,14 @@ target_sources(${PROJECT_NAME}
 )
 
 ### 添加库依赖
-target_link_libraries( ${PROJECT_NAME}
-
-)
+# 针对 Windows 平台添加特定库依赖
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        bthprops  # Windows bluetoth API
+        ws2_32 # Windows Sockets API
+    )
+endif()
 
 ### 定义宏
 target_compile_definitions(${PROJECT_NAME} 

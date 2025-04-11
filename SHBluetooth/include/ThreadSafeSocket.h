@@ -12,12 +12,12 @@
 #include "base.h" 
 
 class ThreadSafeSocket;
-using NewConnectionCallback = std::function<void(ThreadSafeSocket* safesocket,int socket)>;
+using NewConnectionCallback = std::function<void(ThreadSafeSocket*, SOCKET)>;
 class BT_EXPORT ThreadSafeSocket
 {
 public:
 	virtual int sendData(const char* data, int length) = 0;
-	virtual int socket() = 0;
+	virtual SOCKET socket() = 0;
 	virtual ~ThreadSafeSocket() {}	
 };
 #endif // THREAD_SAFE_SOCKET_H

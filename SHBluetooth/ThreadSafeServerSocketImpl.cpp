@@ -4,7 +4,8 @@
  *
  * ====================================================================
  * This product includes Bluetooth Secure Communication System,
- * Authored and developed by David Chin (Contact: luckqinwei@hotmail.com) */
+ * Authored and developed by David Chin (Contact: luckqinwei@hotmail.com) 
+ */
 
 #include "pch.h"
 #include "ThreadSafeServerSocketImpl.h"
@@ -118,7 +119,7 @@ int ThreadSafeServerSocketImpl::sendData(const char* data, int length)
     return length;
 
 }
-int ThreadSafeServerSocketImpl::socket()
+SOCKET ThreadSafeServerSocketImpl::socket()
 {
     return sock;
 }
@@ -209,7 +210,7 @@ void ThreadSafeServerSocketImpl::clientHandler(SOCKET clientSocket, const Receiv
             while ((pos = findMessageEnd(complete_data)) != std::string::npos) {
                 // 提取一条完整的消息
                 std::vector<char> message(complete_data.begin(), complete_data.begin() + pos);
-                callback(handler, message.data(), message.size());
+                callback(handler, message.data(), static_cast<int>(message.size()));
 
                 // 移除已处理的消息
                 complete_data.erase(complete_data.begin(), complete_data.begin() + pos + sizeof(DATAEND));

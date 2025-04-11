@@ -91,7 +91,7 @@ int ThreadSafeClientSocketImpl::sendData(const char* data, int length) {
 
     return result;
 }
-int ThreadSafeClientSocketImpl::socket()
+SOCKET ThreadSafeClientSocketImpl::socket()
 {
     return (int)sock;
 }
@@ -134,7 +134,7 @@ void ThreadSafeClientSocketImpl::receiveLoop(const ReceiveCallback& callback, vo
             while ((pos = findMessageEnd(complete_data)) != std::string::npos) {
                 // 提取一条完整的消息
                 std::vector<char> message(complete_data.begin(), complete_data.begin() + pos);
-                callback(handler, message.data(), message.size());
+                callback(handler, message.data(), static_cast<int>(message.size()));
 
                 // 移除已处理的消息
                 complete_data.erase(complete_data.begin(), complete_data.begin() + pos + sizeof(DATAEND));

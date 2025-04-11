@@ -32,7 +32,7 @@ public:
 public:
     // ThreadSafeSocket
     int sendData(const char* data, int length) override;
-    int socket() override;
+    SOCKET socket() override;
 private:
     void receiveLoop(const ReceiveCallback& callback, void* handler);
 

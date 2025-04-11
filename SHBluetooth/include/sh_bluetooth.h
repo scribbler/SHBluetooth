@@ -12,36 +12,9 @@
 #define SH_BLUETOOTH_H_
 
 #include "base.h"
-#ifdef _WIN32
-#include <winsock2.h>
-#include <ws2bth.h>
-#include <windows.h>
-#include <bluetoothapis.h>
-#else
-#include <sys/socket.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_lib.h>
-#endif
-#include <bluetoothapis.h>
+
 #include <string>
 #include <vector>
-
-
-#ifdef _WIN32
-#else
-typedef int SOCKET;
-typedef struct sockaddr SOCKADDR_BTH;
-typedef int HANDLE;
-#endif
-
-#ifdef _WIN32
-#define CLOSE_SOCKET closesocket
-#define GET_LAST_ERROR WSAGetLastError()
-#else
-#define CLOSE_SOCKET close
-#define GET_LAST_ERROR errno
-#endif
 
 namespace bt
 {

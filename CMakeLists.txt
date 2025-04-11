@@ -14,3 +14,7 @@ project ("SHBluetooth")
 # 包含子项目。
 add_subdirectory ("SHBluetooth")
 
+
+add_subdirectory("BluetoothServerDemo")
+
+add_subdirectory("BluetoothClientDemo")

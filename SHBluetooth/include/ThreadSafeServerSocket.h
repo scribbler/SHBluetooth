@@ -25,7 +25,7 @@ public:
 public:
     // ThreadSafeSocket
     int sendData(const char* data, int length) override;
-    int socket() override;
+    SOCKET socket() override;
 private:
     ThreadSafeServerSocketImpl* pImpl; 
 };

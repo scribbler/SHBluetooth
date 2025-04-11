@@ -32,7 +32,7 @@ int ThreadSafeServerSocket::sendData(const char* data, int length)
     return pImpl->sendData(data, length);
 }
 
-int ThreadSafeServerSocket::socket()
+SOCKET ThreadSafeServerSocket::socket()
 {
     return pImpl->socket();
 }

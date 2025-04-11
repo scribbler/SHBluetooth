@@ -27,7 +27,7 @@ public:
     bool isConnected();
 public:
     int sendData(const char* data, int length) override;
-    int socket() override;
+    SOCKET socket() override;
 private:
     void acceptLoop(const NewConnectionCallback& newconnection, const ReceiveCallback& callback, void* handler);
     void clientHandler(SOCKET clientSocket, const ReceiveCallback& callback, void* handler);
