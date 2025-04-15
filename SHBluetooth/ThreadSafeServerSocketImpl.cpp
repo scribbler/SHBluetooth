@@ -37,6 +37,10 @@ bool ThreadSafeServerSocketImpl::initialize(int port) {
             else
             {
                 ULONG recvBufSize = BUFFER_SIZE;
+                if (bt::sh_setsockopt(sock, SOL_SOCKET, SO_SNDBUF, recvBufSize) == SOCKET_ERROR)
+                {
+                    std::cerr << "Set socket sendbuf failed: " << WSAGetLastError() << std::endl;
+                }
                 if (bt::sh_setsockopt(sock, SOL_SOCKET, SO_RCVBUF, recvBufSize) == SOCKET_ERROR)
                 {
                     std::cerr << "Set socket revbuf failed: " << WSAGetLastError() << std::endl;

@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <Stringapiset.h>
 static const char DATAEND[4] = { '\r','\n','\r','\n' };
-static const int BUFFER_SIZE = 1024*1024;
+static const int BUFFER_SIZE = 1024*64;
 using namespace std;
 
 
