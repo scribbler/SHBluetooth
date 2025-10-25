@@ -13,6 +13,7 @@
 
 class ThreadSafeSocket;
 using NewConnectionCallback = std::function<void(ThreadSafeSocket*, SOCKET)>;
+void (NewConnectionCallbackC)(ThreadSafeSocket server, SOCKET clientSocket);
 class BT_EXPORT ThreadSafeSocket
 {
 public:
