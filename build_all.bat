@@ -1,7 +1,7 @@
 @echo off
 
 REM ===== x64 =====
-call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 cmake -S . -B out\build\x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build out\build\x64-Debug
@@ -10,7 +10,7 @@ cmake -S . -B out\build\x64-Release -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build out\build\x64-Release
 
 REM ===== x86 =====
-call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
 
 cmake -S . -B out\build\x86-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build out\build\x86-Debug

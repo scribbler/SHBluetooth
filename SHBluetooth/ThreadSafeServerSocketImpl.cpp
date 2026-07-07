@@ -12,11 +12,13 @@
 #include "bt_common.h"
 
 const char* SPP_UUID_STR = "00006666-0000-1000-8000-00805F9B34FB";
-ThreadSafeServerSocketImpl::ThreadSafeServerSocketImpl() : sock(INVALID_SOCKET) {
+ThreadSafeServerSocketImpl::ThreadSafeServerSocketImpl() 
+    : sock(INVALID_SOCKET)
+    , running(false)
+    , accepting_paused(false)
+    , blocking(1)
+{
     InitializeCriticalSection(&cs);
-    running.store(false);
-	blocking = 1;
-    accepting_paused.store(false);
 }
 
 ThreadSafeServerSocketImpl::~ThreadSafeServerSocketImpl() {
@@ -178,7 +180,8 @@ void ThreadSafeServerSocketImpl::acceptLoop(const NewConnectionCallback& newconn
                 continue;
             }
         }
-        
+         
+        bool accepted = false;
         {
             std::lock_guard<std::mutex> lock(mtx);
 			if (!clientSockets.empty()) 
@@ -190,8 +193,13 @@ void ThreadSafeServerSocketImpl::acceptLoop(const NewConnectionCallback& newconn
 				continue;
 			}
             clientSockets.push_back(clientSocket);
+            accepted = true;
+        }
+        if (accepted && newconnection )
+        {
             newconnection(this, clientSocket);
         }
+
         clientThreads.emplace_back(&ThreadSafeServerSocketImpl::clientHandler, this, clientSocket, callback, handler);
     }
 }
