@@ -30,3 +30,21 @@ private:
     ThreadSafeServerSocketImpl* pImpl; 
 };
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	
+    BT_EXPORT ThreadSafeServerSocket* CreateThreadSafeServerSocketInstance();
+	BT_EXPORT void DeleteThreadSafeServerSocketInstance(ThreadSafeServerSocket* instance);
+    BT_EXPORT bool InstanceInitialize(ThreadSafeServerSocket* instance,int port);
+    BT_EXPORT void InstanceStartAccepting(ThreadSafeServerSocket* instance,const NewConnectionCallback& newconnection, const ReceiveCallback& callback, void* handler);
+    BT_EXPORT void InstanceStopAccepting(ThreadSafeServerSocket* instance);
+    BT_EXPORT void InstancePauseAccepting(ThreadSafeServerSocket* instance,bool paused);
+    BT_EXPORT bool InstanceIsConnected(ThreadSafeServerSocket* instance);
+    BT_EXPORT int InstanceSendData(ThreadSafeServerSocket* instance, const char* data, int length);
+    BT_EXPORT SOCKET InstanceSocket(ThreadSafeServerSocket* instance);
+
+#if defined(__cplusplus)
+}  // extern C
+#endif  

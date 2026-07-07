@@ -31,7 +31,7 @@ int main()
         return -1;
     }
 
-    serverSocket.startAccepting(nullptr, onReceive, &serverSocket);
+    serverSocket.startAccepting(nullptr, &onReceive, &serverSocket);
 
     std::cout << "Server is accepting connections on port " << port << std::endl;
 

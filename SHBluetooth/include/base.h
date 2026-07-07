@@ -69,5 +69,7 @@ extern "C" {
 #endif  // 
 
 using ReceiveCallback = std::function<void(void* handler, const char*, int)>;
+void (ReceiveCallbackC)(void* handler, const char*, int);
 using ExecuteFunction = std::function<bool(void* result)>;
+bool (ExecuteFunctionC)(void* result);
 #endif  // SHBLUETOOTH_HEADER_BASE_H
