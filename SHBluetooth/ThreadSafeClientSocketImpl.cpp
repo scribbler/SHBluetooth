@@ -1,4 +1,4 @@
-/* ====================================================================
+ï»¿/* ====================================================================
  *
  * Copyright (c) 2025-2027 The SHBluetooth Project.  All rights reserved.
  *
@@ -133,14 +133,14 @@ void ThreadSafeClientSocketImpl::receiveLoop(const ReceiveCallback& callback, vo
         if (bytesReceived > 0) {
             complete_data.insert(complete_data.end(), buffer, buffer + bytesReceived);
 
-            // ´¦ÀíÍêÕûµÄÏûÏ¢
+            // å¤„ç†å®Œæ•´çš„æ¶ˆæ¯
             size_t pos;
             while ((pos = findMessageEnd(complete_data)) != std::string::npos) {
-                // ÌáÈ¡Ò»ÌõÍêÕûµÄÏûÏ¢
+                // æå–ä¸€æ¡å®Œæ•´çš„æ¶ˆæ¯
                 std::vector<char> message(complete_data.begin(), complete_data.begin() + pos);
                 callback(handler, message.data(), static_cast<int>(message.size()));
 
-                // ÒÆ³ıÒÑ´¦ÀíµÄÏûÏ¢
+                // ç§»é™¤å·²å¤„ç†çš„æ¶ˆæ¯
                 complete_data.erase(complete_data.begin(), complete_data.begin() + pos + sizeof(DATAEND));
             }
         }
@@ -148,7 +148,7 @@ void ThreadSafeClientSocketImpl::receiveLoop(const ReceiveCallback& callback, vo
 
             if (WSAGetLastError() == WSAEWOULDBLOCK)
             {
-                // ·Ç×èÈûÄ£Ê½ÏÂÃ»ÓĞÊı¾İ¿É¶Á£¬ÉÔ×÷ĞİÃßÒÔ±ÜÃâÃ¦µÈ
+                // éé˜»å¡æ¨¡å¼ä¸‹æ²¡æœ‰æ•°æ®å¯è¯»ï¼Œç¨ä½œä¼‘çœ ä»¥é¿å…å¿™ç­‰
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             else
@@ -169,9 +169,9 @@ void ThreadSafeClientSocketImpl::receiveLoop(const ReceiveCallback& callback, vo
 }
 
 /// <summary>
-/// »ñµÃÊÇ·ñ×èÈûÄ£Ê½
+/// è·å¾—æ˜¯å¦é˜»å¡æ¨¡å¼
 /// </summary>
-/// <returns>true×èÈû£¬false·Ç×èÈû</returns>
+/// <returns>trueé˜»å¡ï¼Œfalseéé˜»å¡</returns>
 bool ThreadSafeClientSocketImpl::isBlocking() const {
     return blocking != 0;
 }
