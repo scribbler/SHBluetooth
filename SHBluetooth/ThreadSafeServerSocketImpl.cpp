@@ -23,7 +23,10 @@ ThreadSafeServerSocketImpl::ThreadSafeServerSocketImpl()
 
 ThreadSafeServerSocketImpl::~ThreadSafeServerSocketImpl() {
     stopAccepting();
-    bt::sh_closesocket(sock);
+    if (sock != INVALID_SOCKET) {
+        bt::sh_closesocket(sock);
+        sock = INVALID_SOCKET;
+    }
     bt::sh_cleansocket();
     DeleteCriticalSection(&cs);
 }
@@ -76,11 +79,13 @@ void ThreadSafeServerSocketImpl::stopAccepting() {
     }
     running.store(false);
 
-    shutdown(sock, SD_BOTH);  
-    bt::sh_closesocket(sock);
+    if (sock != INVALID_SOCKET) {
+        shutdown(sock, SD_BOTH);
+        bt::sh_closesocket(sock);
+        sock = INVALID_SOCKET;
+    }
 
     if (acceptThread.joinable()) {
-    
         acceptThread.join();
     }
 
@@ -135,68 +140,69 @@ void ThreadSafeServerSocketImpl::acceptLoop(const NewConnectionCallback& newconn
         std::cerr << "Listen failed: " << WSAGetLastError() << std::endl;
         return;
     }
-    
+
     while (running.load()) {
         // 检查现有的客户端套接字是否有效
         {
             std::lock_guard<std::mutex> lock(mtx);
-            for (auto it = clientSockets.begin(); it != clientSockets.end();)
-            {
+            for (auto it = clientSockets.begin(); it != clientSockets.end();) {
                 SOCKET clientSocket = *it;
-                if ( !bt::sh_is_socket_connected(clientSocket))
-                {
-                    // 套接字无效，移除并关闭
+                if (!bt::sh_is_socket_connected(clientSocket)) {
                     std::cerr << "Removing invalid client socket." << std::endl;
                     shutdown(clientSocket, SD_BOTH);
                     bt::sh_closesocket(clientSocket);
                     it = clientSockets.erase(it);
                 }
-                else
-                {
+                else {
                     ++it;
                 }
             }
         }
-       
-        if (accepting_paused.load())
-        {
+
+        if (accepting_paused.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             continue;
         }
 
-        // 接受新的客户端连接
+        int error_code = 0;
+        if (!bt::sh_wait_for_socket_readable(sock, 500, &error_code)) {
+            if (!running.load()) {
+                std::cout << "Accept loop interrupted by shutdown." << std::endl;
+                break;
+            }
+            if (error_code != WSAEINTR && error_code != WSAEINVAL && error_code != WSAETIMEDOUT) {
+                std::cerr << "Select failed: " << error_code << std::endl;
+            }
+            continue;
+        }
+
         SOCKET clientSocket = bt::sh_accept(sock);
         if (clientSocket == INVALID_SOCKET) {
             int error = WSAGetLastError();
-            if (error == WSAEWOULDBLOCK || error == WSAEINVAL || error == WSAENOTSOCK || error == WSANOTINITIALISED) {
-                // 没有新的连接，稍作休眠以避免忙等
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                continue;
-            } else if (!running.load()) {
-                std::cout << "Accept interrupted by shutdown." << std::endl;
-                break;
-            } else {
-                std::cerr << "Accept failed: " << error << std::endl;
+            if (error == WSAEWOULDBLOCK || error == WSAEINTR || error == WSAEINVAL) {
                 continue;
             }
+            if (!running.load()) {
+                std::cout << "Accept interrupted by shutdown." << std::endl;
+                break;
+            }
+            std::cerr << "Accept failed: " << error << std::endl;
+            continue;
         }
-         
+
         bool accepted = false;
         {
             std::lock_guard<std::mutex> lock(mtx);
-			if (!clientSockets.empty()) 
-            {
-				// 如果已有客户端连接，拒绝新连接
-				std::cerr << "A client is already connected. Rejecting new connection." << std::endl;
-				shutdown(clientSocket, SD_BOTH);
-				bt::sh_closesocket(clientSocket);
-				continue;
-			}
+            if (!clientSockets.empty()) {
+                std::cerr << "A client is already connected. Rejecting new connection." << std::endl;
+                shutdown(clientSocket, SD_BOTH);
+                bt::sh_closesocket(clientSocket);
+                continue;
+            }
             clientSockets.push_back(clientSocket);
             accepted = true;
         }
-        if (accepted && newconnection )
-        {
+        if (accepted && newconnection) {
             newconnection(this, clientSocket);
         }
 

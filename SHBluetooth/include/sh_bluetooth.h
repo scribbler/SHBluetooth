@@ -97,6 +97,7 @@ namespace bt
 		BT_EXPORT int sh_last_error();
 
 		BT_EXPORT bool sh_is_socket_connected(SOCKET sockfd);
+		BT_EXPORT bool sh_wait_for_socket_readable(SOCKET sockfd, int timeout_ms, int* error_code);
 
 #ifdef __cplusplus
 	}
