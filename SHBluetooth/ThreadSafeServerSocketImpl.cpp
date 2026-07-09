@@ -167,13 +167,18 @@ void ThreadSafeServerSocketImpl::acceptLoop(const NewConnectionCallback& newconn
         int error_code = 0;
         if (!bt::sh_wait_for_socket_readable(sock, 500, &error_code)) {
             if (!running.load()) {
-                std::cout << "Accept loop interrupted by shutdown." << std::endl;
+                std::cout << "Accept loop interrupted by shutdown because of timeout." << std::endl;
                 break;
             }
             if (error_code != WSAEINTR && error_code != WSAEINVAL && error_code != WSAETIMEDOUT) {
                 std::cerr << "Select failed: " << error_code << std::endl;
             }
             continue;
+        }
+        if (!running.load())
+        {
+            std::cout << "Accept loop interrupted by shutdown because of timeout." << std::endl;
+            break;
         }
 
         SOCKET clientSocket = bt::sh_accept(sock);

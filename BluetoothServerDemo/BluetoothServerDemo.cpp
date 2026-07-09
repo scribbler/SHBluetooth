@@ -39,9 +39,8 @@ int main()
     std::thread loopThread(messageLoop);
 
     std::cout << "Press Enter to stop the server..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-    serverSocket.stopAccepting();
     std::cin.get();
+    serverSocket.stopAccepting();
 
     // 停止消息循环
     running.store(false);
